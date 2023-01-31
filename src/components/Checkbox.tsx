@@ -1,45 +1,39 @@
-import {
-  Text,
-  TouchableOpacity,
-  TouchableOpacityProps,
-  View,
-} from "react-native";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import colors from "tailwindcss/colors";
-
-interface Props extends TouchableOpacityProps {
+import Animated, { ZoomIn, ZoomOut } from "react-native-reanimated";
+export interface Props extends TouchableOpacityProps {
   checked?: boolean;
 }
 
-
-export function Checkbox({ checked = false, ...rest }: Props) {  
-    return (
-    <TouchableOpacity
-      activeOpacity={0.7}
-      className="flex-row mb-2 items-center"
-      {...rest}
-    >
-      {checked ? (
-        <View className="h-8 w-8 bg-purpleDark rounded-lg items-center justify-center">
+export function Checkbox({ checked = false, ...rest }: Props) {
+  return (
+    <View className="m-2">
+      <TouchableOpacity
+        activeOpacity={0.7}
+        className="flex-row mb-2 items-center"
+        {...rest}
+      >
+        {checked ? (
+          <Animated.View
+            className="rounded-lg items-center justify-center"
+            entering={ZoomIn}
+            exiting={ZoomOut}
+          >
+            <MaterialCommunityIcons
+              name="check-circle-outline"
+              color="#5E60CE"
+              size={30}
+            />
+          </Animated.View>
+        ) : (
           <MaterialCommunityIcons
-            name="checkbox-marked-circle"
-            size={24}
-            color="#5E60CE"
+            name="checkbox-blank-circle-outline"
+            color="#4EA8DE"
+            size={30}
           />
-        </View>
-      ) : (
-        <MaterialCommunityIcons
-          name="checkbox-blank-circle-outline"
-          size={24}
-          color="#4EA8DE"
-          
-        />
-      )}
-    </TouchableOpacity>
+        )}
+      </TouchableOpacity>
+    </View>
   );
 }
-function handleCheckbox() {
-    throw new Error("Function not implemented.");
-}
-

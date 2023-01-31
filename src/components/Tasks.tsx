@@ -17,6 +17,9 @@ import { Task } from "./Task";
 export function Tasks() {
   const [tasks, setTasks] = useState<string[]>([]);
   const [taskName, setTaskName] = useState("");
+  //const [isDone, setDone] = useState(Boolean);
+
+ // const done = setDone(!isDone);
 
   function handleCreateTask() {
     if (taskName === "") {
@@ -60,8 +63,8 @@ export function Tasks() {
 
       <View className="mt-6 w-full px-5">
         <View className="flex-row justify-between border-0.5 border-gray600 border-b-gray300 pb-4">
-          <Text className="text-blue font-bold">Criadas 0</Text>
-          <Text className="text-purple font-bold">Concluídas 0</Text>
+          <Text className="text-blue font-bold">Criadas {tasks.length}</Text>
+          <Text className="text-purple font-bold">Concluídas 0 </Text>
         </View>
 
         <FlatList
@@ -69,6 +72,8 @@ export function Tasks() {
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <Task
+              //done={isDone}
+              done
               key={item}
               name={item}
               onRemove={() => handleTaskRemove(item)}
