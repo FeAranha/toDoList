@@ -5,21 +5,57 @@ import {
   TouchableOpacity,
   Alert,
   FlatList,
+  ScrollView,
+  useWindowDimensions,
 } from "react-native";
 import colors from "tailwindcss/colors";
-
 import { Feather } from "@expo/vector-icons";
 
 import Clipboard from "../assets/clibboard.svg";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Task } from "./Task";
+import { ProgressBar } from "./ProgressBar";
+
+type ScrollProps = {
+  layoutMeasurement: {
+    height: number;
+  };
+  contentOffset: {
+    y: number;
+  };
+  contentSize: {
+    height: number;
+  };
+};
 
 export function Tasks() {
   const [tasks, setTasks] = useState<string[]>([]);
   const [taskName, setTaskName] = useState("");
-  //const [isDone, setDone] = useState(Boolean);
 
- // const done = setDone(!isDone);
+  const [percentage, setPercentege] = useState(0);
+  const dimensions = useWindowDimensions();
+  const scrollRef = useRef<ScrollView>(null);
+
+  function scrollPercentage({
+    contentSize,
+    contentOffset,
+    layoutMeasurement,
+  }: ScrollProps) {
+    const visibleContent = Math.ceil(
+      (dimensions.height / contentSize.height) * 100
+    );
+    const value =
+      ((layoutMeasurement.height + contentOffset.y) / contentSize.height) * 100; //%
+    setPercentege(value < visibleContent ? 0 : value);
+  }
+
+  function handleScrollMoveTop() {
+    scrollRef.current?.scrollTo({
+      x: 0,
+      y: 0,
+      animated: true,
+    });
+  }
 
   function handleCreateTask() {
     if (taskName === "") {
@@ -64,34 +100,40 @@ export function Tasks() {
       <View className="mt-6 w-full px-5">
         <View className="flex-row justify-between border-0.5 border-gray600 border-b-gray300 pb-4">
           <Text className="text-blue font-bold">Criadas {tasks.length}</Text>
-          <Text className="text-purple font-bold">Concluídas 0 </Text>
+          <Text className="text-purple font-bold">Concluídas </Text>
         </View>
-
-        <FlatList
-          data={tasks}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <Task
-              //done={isDone}
-              done
-              key={item}
-              name={item}
-              onRemove={() => handleTaskRemove(item)}
-            />
-          )}
+        <ScrollView
+          ref={scrollRef}
+          scrollEventThrottle={16}
           showsVerticalScrollIndicator={false}
-          ListEmptyComponent={() => (
-            <View className="mt-8 items-center">
-              <Clipboard />
-              <Text className="text-gray300 font-bold mt-6">
-                Você ainda não tem tarefas cadastradas
-              </Text>
-              <Text className=" text-gray300 font-regular">
-                Crie tarefas e organize seus itens a fazer
-              </Text>
-            </View>
-          )}
-        />
+          contentContainerStyle={{ paddingBottom: 220 }}
+          onScroll={(event) => scrollPercentage(event.nativeEvent)}
+        >
+          <FlatList
+            data={tasks}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <Task
+                key={item}
+                name={item}
+                onRemove={() => handleTaskRemove(item)}
+              />
+            )}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={() => (
+              <View className="mt-8 items-center">
+                <Clipboard />
+                <Text className="text-gray300 font-bold mt-6">
+                  Você ainda não tem tarefas cadastradas
+                </Text>
+                <Text className=" text-gray300 font-regular">
+                  Crie tarefas e organize seus itens a fazer
+                </Text>
+              </View>
+            )}
+          />
+        </ScrollView>
+        <ProgressBar value={percentage} onMoveTop={handleScrollMoveTop} />
       </View>
     </View>
   );

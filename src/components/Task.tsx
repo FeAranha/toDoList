@@ -4,25 +4,23 @@ import colors from "tailwindcss/colors";
 import { Checkbox } from "./Checkbox";
 import { useState } from "react";
 
-type Props = {
+interface Props {
   name: string;
   done?: boolean;
   onRemove: () => void;
-};
+}
 
-export function Task({ name, onRemove }: Props) {
-  const [isSelected, setSelection] = useState(false)
+export function Task({ name, done, onRemove }: Props) {
+  const [isSelected, setSelection] = useState(false);
 
   function handleCheck() {
-    setSelection(!isSelected)
+    setSelection(!isSelected);
+    done = !isSelected;
   }
 
   return (
     <View className="w-full bg-gray500 flex-row items-center mb-2 border-0.5 border-gray400 rounded-md">
-      <Checkbox
-      onPress={handleCheck}
-      checked={isSelected}
-      />
+      <Checkbox onPress={handleCheck} checked={isSelected} />
 
       <Text className="ml-2 flex-1 text-gray100 font-regular">{name}</Text>
 
