@@ -24,7 +24,7 @@ Rocketseat Challenge 01: Front-end development a To Do List in React Native (mob
 ## Others
 
 - Expo
-- Tailwindcss
+- Tailwindcss(TailwindNative)
 
 
 erros: chieldren component, count 
